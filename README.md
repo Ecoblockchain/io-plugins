@@ -33,6 +33,8 @@ The following platform IO Plugins are currently available:
   - [Bean-IO](https://github.com/monteslu/bean-io/)
 - Linino One
   - [Nino-IO](https://github.com/rwaldron/nino-io/)
+- LinuxIO (Extensible Linux IO Plugin class to make your own!)
+  - [Linux-IO](https://github.com/fivdi/linux-io/)
 - Particle Core & Particle Photon
   - [Particle-IO](https://github.com/rwaldron/particle-io/)
 - pcDuino
@@ -74,7 +76,9 @@ The plugin must...
                 - OUTPUT mode: property updated via *Write methods
             - `report`: 1 if reporting, 0 if not reporting
             - `analogChannel`: corresponding analogPin index (127 if none), eg. `analogChannel: 0` is `A0` whose index is `14` in the `pins` array.
-    - include a readonly property named `analogPins` whose value is an array of pin indices that correspond to the analog pin indices in the `pins` array. 
+    - include a readonly property named `analogPins` whose value is an array of pin indices that correspond to the analog pin indices in the `pins` array.
+    - include a readonly property named `HIGH` whose value corresponds to the logic high value used by the IO plugin, e.g. `1`
+    - include a readonly property named `LOW` whose value corresponds to the logic low value used by the IO plugin, e.g. `0`
 - If an essential IO feature is not implemented or _cannot_ be implemented, the method _must_ throw. For example, the Raspberry Pi does not support analog inputs, if user code calls through to an `analogRead`, the program must throw as an irrefutable means of indicating non-support.
 - If a non-essential IO feature is not implemented or _cannot_ be implemented, the method _must_ accept the expected arguments and indicate successful completion. For example, if it receives a callback, that callback _must_ be called asynchronously.
 
@@ -124,7 +128,7 @@ Data writing operations must be executed in order of instruction.
 
 #### servoWrite(pin, value)
 
-- Accept a `value` in degrees (0-180) that is written to the specified `pin`.
+- Accept a `value` that is written to the specified `pin`. If the value is between 0 and 180, it is assumed to be a servo arm position in degrees. If the value is between 180 and 544, it is also assumed to be in degrees and is truncated to 180. If the value is greater than or equal to 544, it is assumed to be a duty cycle in microseconds.
 
 ### Reading
 
@@ -314,7 +318,9 @@ io.normalize("A0"); // 14
 
 - This is the pin address for the board's default, built-in led.
 
+#### name
 
+- A printable version of the name of the IO plugin being used, e.g. "Raspi IO"
 
 ### TODO
 
